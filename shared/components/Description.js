@@ -38,13 +38,17 @@ const Table = styled.table`
 `;
 
 const Files = styled.div`
-  flex: 0.6;
+  flex: 0.55;
   padding-top: 10px;
   overflow: scroll;
 `;
 
 const Info = styled.div`
-  flex: 0.4;
+  flex: 0.45;
+`;
+
+const Td = styled.td`
+  width: ${props => props.width}
 `;
 
 @withRedux(initStore, ({ details, loading }) => ({
@@ -54,6 +58,7 @@ const Info = styled.div`
 export default class Description extends PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
+    loading: PropTypes.bool.isRequired,
     details: PropTypes.shape({
       name: PropTypes.string,
       torrentId: PropTypes.string,
@@ -128,7 +133,7 @@ export default class Description extends PureComponent {
     );
   };
 
-  getFiles() {
+  getFiles = () => {
     const { details } = this.props;
 
     const x =
@@ -143,10 +148,10 @@ export default class Description extends PureComponent {
 
         return (
           <tr>
-            <td>{this.getFileIcon(file.type)}</td>
+            <Td width="20px">{this.getFileIcon(file.type)}</Td>
             <td style={{ maxWidth: '275px' }} className="text-ellipsis">{file.name}</td>
             <td>{file.size}</td>
-            <td>
+            <Td width="20px">
               {Description.isSupported(file.type) &&
                 <button className="btn btn-link" onClick={this.startStream}>
                   <i
@@ -155,13 +160,34 @@ export default class Description extends PureComponent {
                     data-id={i}
                   />
                 </button>}
-            </td>
+            </Td>
+            <Td width="30px" className="text-center">
+              <a
+                href={`http://${window.location.hostname}:7500/api/download/${details.torrentId}/${i}/${file.name}`}
+                download
+              >
+                <i className="mdi mdi-download fs-18" />
+              </a>
+            </Td>
           </tr>
         );
       });
 
-    return <Files><Table><tbody>{x}</tbody></Table></Files>;
-  }
+    return (
+      <Files>
+        <Table>
+          <thead>
+            <th />
+            <th className="text-left">File Name</th>
+            <th className="text-left">Size</th>
+            <th />
+            <th />
+          </thead>
+          <tbody>{x}</tbody>
+        </Table>
+      </Files>
+    );
+  };
 
   static isSupported(mime) {
     return (
@@ -174,9 +200,13 @@ export default class Description extends PureComponent {
   render() {
     const { details, loading } = this.props;
 
-    if (!details.name) return <div />;
-
-    if (loading) return <Wrapper><div className="loading" /></Wrapper>;
+    if (loading || !details.name) {
+      return (
+        <Wrapper>
+          <div className="loading" />
+        </Wrapper>
+      );
+    }
 
     return (
       <Wrapper>

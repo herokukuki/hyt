@@ -28,8 +28,7 @@ const Td = styled.div`
   flex: ${props => props.flex};
 `;
 
-const Tr = styled.div`
-  cursor: pointer;
+const Row = styled.div`
   display: flex;
   flex-direction: ${props => props.direction || 'column'};
   &:nth-of-type(2n){
@@ -83,9 +82,9 @@ export default class Results extends PureComponent {
     const result = results.data[index];
 
     return (
-      <Tr key={result.id} data-id={result.id} style={style}>
+      <Row key={result.id} data-id={result.id} style={style}>
         <div
-          style={{ display: 'flex', flexDirection: 'row' }}
+          style={{ display: 'flex', flexDirection: 'row', cursor: 'pointer' }}
           onClick={() => {
             this.setState(
               {
@@ -120,7 +119,7 @@ export default class Results extends PureComponent {
           <Td flex={1}>{result.leechers}</Td>
         </div>
         {this.state.selectedIndex === index && <Description />}
-      </Tr>
+      </Row>
     );
   };
 
@@ -166,14 +165,14 @@ export default class Results extends PureComponent {
     const rowCount = this.props.results.data.length + 1;
     return (
       <Table>
-        <Tr direction="row" style={{ padding: '0 20px' }} className="text-bold">
+        <Row direction="row" style={{ padding: '0 20px' }} className="text-bold">
           <Td flex={0.5}>#</Td>
           <Td flex={10}>Name</Td>
           <Td flex={2}>Uploaded</Td>
           <Td flex={2}>File Size</Td>
           <Td flex={1} className="mdi mdi-arrow-down-bold" />
           <Td flex={1} className="mdi mdi-arrow-up-bold" />
-        </Tr>
+        </Row>
         <div style={{ flex: 1 }}>
           <InfiniteLoader
             isRowLoaded={this.isRowLoaded}

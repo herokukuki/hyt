@@ -24,7 +24,7 @@ const ImageLightbox = styled.img`
 `;
 
 const CloseIcon = styled.i`
-  font-size: 40px;
+  font-size: 30px;
   cursor: pointer;
 `;
 

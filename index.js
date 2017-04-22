@@ -35,7 +35,7 @@ function createWindow () {
         win = new BrowserWindow({
           height: 800,
           width: 1000,
-          vibrancy: 'light'
+          frame: false
         })
 
         if (dev) {
