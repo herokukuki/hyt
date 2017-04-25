@@ -46,6 +46,31 @@ const Files = styled.div`
 
 const Info = styled.div`
   flex: 0.4;
+  border-right: 1px solid #f6f6f6;
+  padding:10px;
+`;
+
+const Poster = styled.div`
+  width: 110px;
+  height: 166px;
+  border-radius: 2px;
+  background-image: url(${props => props.src});
+  background-position: center;
+  background-size: cover;
+  background-color: #f0f0f0;
+`;
+
+const Plot = styled.div`
+  flex: 1;
+  overflow: hidden;
+  color: #555;
+  height: 94px;
+  margin: 19px 0;
+  padding: 0;
+`;
+
+const InfoRight = styled.div`
+  flex-direction: column;
 `;
 
 @withRedux(initStore, ({ details, loading, cast }) => ({
@@ -216,9 +241,32 @@ export default class Description extends PureComponent {
       );
     }
 
+    const { parsedDetails, info } = details;
+
     return (
       <Wrapper>
-        <Info />
+        <Info>
+          <div className="tile">
+            <Poster src={info.poster} alt="" />
+            <InfoRight>
+              <div className="tile-content">
+                <div className="tile-title"><b>{parsedDetails.title}</b></div>
+                <div className="tile-subtitle">{info.actors}</div>
+              </div>
+
+              <div className="tile-content">
+                <div className="tile-title">Files</div>
+                <div className="tile-subtitle">{details.files.length} files</div>
+              </div>
+              {info.right &&
+                <div className="tile-content">
+                  <div className="tile-title">Rating</div>
+                  <div className="tile-subtitle">{info.rating} / 10</div>
+                </div>}
+            </InfoRight>
+          </div>
+          <Plot>{info.plot}</Plot>
+        </Info>
         {this.getFiles()}
         <MediaModal
           infoHash={details.torrentId}

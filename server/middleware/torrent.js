@@ -4,6 +4,8 @@ const rangeParser = require('range-parser');
 const prettyBytes = require('pretty-bytes');
 const atob = require('atob');
 const pump = require('pump');
+const imdb = require('imdb-api');
+const ptn = require('parse-torrent-name');
 const torrentStore = require('./helpers/torrentStore');
 const search = require('./helpers/search');
 
@@ -16,8 +18,7 @@ function list(req, res) {
 
   const torrent = torrentStore.getTorrent(torrentId);
 
-  function onReady() {
-    deselectAllFiles(torrent);
+  function sendResponse(result = {}) {
     res.json({
       torrentId: torrent.infoHash,
       magnetURI: torrent.magnetURI,
@@ -26,8 +27,26 @@ function list(req, res) {
         size: prettyBytes(file.length),
         type: mime.lookup(file.name)
       })),
-      name: torrent.name
+      name: torrent.name,
+      parsedDetails: ptn(torrent.name),
+      info: result
     });
+  }
+
+  function onReady() {
+    deselectAllFiles(torrent);
+
+    const parsedDetails = ptn(torrent.name);
+
+    imdb.getReq(
+      {
+        name: parsedDetails.title,
+        year: parsedDetails.year
+      },
+      (err, result) => {
+        sendResponse(result);
+      }
+    );
   }
 
   if (torrent.files && torrent.files.length) {
